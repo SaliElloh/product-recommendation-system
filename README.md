@@ -1,108 +1,174 @@
-# 📚 Collaborative Filtering Recommender System
+# Collaborative Filtering Recommendation System 🛍️🤖
 
-This project implements and evaluates collaborative filtering approaches to build a personalized recommendation system for health and personal care products using Amazon's 2023 Review dataset. It explores both user-based and item-based collaborative filtering strategies and provides an in-depth comparative analysis of their recommendation quality.
+[![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://python.org)
+[![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat&logo=pandas&logoColor=white)](https://pandas.pydata.org)
+[![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat&logo=numpy&logoColor=white)](https://numpy.org)
+[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-F7931E?style=flat&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+[![University of Michigan](https://img.shields.io/badge/UMich-00274C?style=flat)](https://umich.edu)
 
----
-
-## 🔧 Project Structure
-
-### 1. `Collaborative_filtering_Approach1.ipynb`
-Implements **User-Based Collaborative Filtering (UBCF)**:
-- Filters: Ratings > 4 and users who rated more than 10 items.
-- Computes user-user similarity using cosine distance.
-- Predicts ratings using K-Nearest Neighbors (KNN).
-- Evaluated using RMSE and recommendation statistics.
-
-### 2. `Collaborative_filtering_Approach2.ipynb`
-Implements **Item-Based Collaborative Filtering (IBCF)**:
-- Filters: Ratings > 3 and users who rated more than 3 items.
-- Computes item-item similarity using Pearson correlation.
-- Uses KNN from the `surprise` library to predict ratings.
-- Evaluated with RMSE and distribution analysis.
-
-### 3. `Analysis_of_recommended_items.ipynb`
-Provides analysis of recommended items:
-- Evaluates diversity, novelty, popularity.
-- Compares item overlaps, distributions, and predictive patterns.
-- Includes scatterplots, correlation matrices, and statistical summaries.
+> University of Michigan, Dearborn | Winter 2024
 
 ---
 
-## 🧠 Methodology
+## Overview
 
-Our approach includes the following steps:
+This project builds and evaluates a **personalized product recommendation system** for health and personal care products using the Amazon 2023 Reviews dataset. It implements and compares two collaborative filtering strategies — **User-Based (UBCF)** and **Item-Based (IBCF)** — analyzing their tradeoffs in accuracy, coverage, and recommendation diversity at scale.
 
-1. **Data Loading & Merging**  
-   The dataset was obtained from Amazon (2023) for Health and Personal Care. Review and metadata files were merged after conversion from JSON to Pandas DataFrames.
-
-2. **Data Preprocessing**  
-   - Verified integrity and structure.
-   - Formed a user-item matrix with 461.7K users, 60.3K items, and 494.1K ratings.
-
-3. **Data Filtering Strategies**  
-   - **Approach 1**: Retained ratings > 4 and users with > 10 ratings.
-   - **Approach 2**: Retained ratings > 3 and users with > 3 ratings.
-   - Additional filtering: Items with fewer than 4 ratings removed (Approach 1), users who rated < 10 items removed (Approach 2).
-
-4. **Model Implementation**  
-   - **Machine Learning Model (KNN - Surprise)**:  
-     - Input: rating scale (1–5), training/test split (70/30).
-     - Similarity: Pearson baseline.
-     - Output: RMSE (Approach 1: 0.156, Approach 2: 0.2556).
-   - **Traditional Item-Item Collaborative Filtering**:  
-     - Each item treated as a vector in high-dimensional space.
-     - Pearson correlation used to find most similar items for prediction.
+The full Amazon 2023 Reviews dataset spans **10M+ interactions** across all product categories. This project loads and processes the complete dataset before filtering to the Health & Personal Care domain, providing a realistic large-scale data engineering challenge on top of the modeling work.
 
 ---
 
-## 📊 Experimental Discussion
+## Results
 
-- **Dataset Size**:  
-  - Reviews file: 66.9 MB  
-  - Metadata: 22.5 MB  
+| Metric | Approach 1 (UBCF) | Approach 2 (IBCF) |
+|---|---|---|
+| Similarity Method | Cosine (user-user) | Pearson correlation (item-item) |
+| Rating Filter | > 4 stars | > 3 stars |
+| Users retained | 1,522 | 8,767 |
+| Items recommended | 596 | 2,995 |
+| Avg. predicted rating | 4.4 ± 0.2 | 4.0 ± 0.48 |
+| **RMSE** | **0.156** | **0.2556** |
+| Correlation (UBCF vs IBCF) | 0.9021 | — |
+| MAE between approaches | 1.35% | — |
 
-- **Reduction Summary**:
-
-| Step                  | Approach 1                           | Approach 2                           |
-|-----------------------|--------------------------------------|--------------------------------------|
-| Rating Filter         | -40% → 301,713 records               | -20% → 369,758 records               |
-| User/Item Filter      | -99.5% → 1,522 users                 | -97.7% → 8,767 users                 |
-
-- **Recommendation Output**:
-  - Approach 1: 596 items, avg. rating = 4.4, std = 0.2
-  - Approach 2: 2,995 items, avg. rating = 4.0, std = 0.48
-  - All items from Approach 1 also appeared in Approach 2.
-  - MAE = 1.35%, Correlation Coefficient = 0.9021
-
-- **Insights**:
-  - Approach 1 offers more precise recommendations.
-  - Approach 2 provides a broader set of items, including lower-rated ones.
-  - Higher data reduction does not always lead to better performance.
+**Key finding:** All 596 items recommended by Approach 1 (UBCF) appeared in Approach 2 (IBCF), confirming that stricter filtering produces a high-precision subset of the broader recommendation space.
 
 ---
 
-## 🧪 Results Summary
+## Dataset
 
-- **Approach 1** (user-based): Lower RMSE, more focused, higher predicted ratings.
-- **Approach 2** (item-based): Broader coverage, higher variance, slightly less accurate.
-- **Overlap**: Complete inclusion of Approach 1 items in Approach 2.
+**Amazon Product Reviews 2023** — one of the largest publicly available e-commerce interaction datasets.
 
----
+| File | Size | Scope |
+|---|---|---|
+| Reviews (raw, all categories) | 66.9 MB | **10M+ interactions** |
+| Metadata | 22.5 MB | Product info |
+| Health & Personal Care subset | — | 494,100 ratings, 461.7K users, 60.3K items |
 
-## 👩‍💻 Contributions
-
-| Name       | Contributions                                                                 |
-|------------|--------------------------------------------------------------------------------|
-| **Sali**   | Recommender system design, comparative analysis, documentation                |
-| **Samar**  | Data exploration, recommender system, integration, documentation              |
-| **Fathi**  | Data loading, cleaning, preprocessing, documentation                          |
-| **Yeshaswi** | Data processing, presentation prep, documentation                            |
+Data source: [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/)
 
 ---
 
-## 📦 Requirements
+## Methodology
 
-Install dependencies via:
+### Pipeline Overview
+
+```
+Full Amazon 2023 Dataset (10M+ interactions)
+           │
+           ▼
+  Filter: Health & Personal Care
+           │
+           ▼
+  User-Item Matrix (494.1K ratings)
+     461.7K users × 60.3K items
+           │
+     ┌─────┴─────┐
+     ▼           ▼
+  Approach 1   Approach 2
+  (UBCF)       (IBCF)
+  Cosine sim   Pearson corr
+  KNN          KNN (Surprise)
+  RMSE: 0.156  RMSE: 0.256
+```
+
+### Data Preprocessing
+
+- Loaded raw JSON review and metadata files and converted to Pandas DataFrames
+- Verified data integrity and formed a sparse user-item interaction matrix
+- Applied two filtering strategies to study the precision-coverage tradeoff:
+
+| Step | Approach 1 (UBCF) | Approach 2 (IBCF) |
+|---|---|---|
+| Rating filter | > 4 stars → 301,713 records (−40%) | > 3 stars → 369,758 records (−20%) |
+| User/item filter | Users with > 10 ratings → 1,522 users (−99.5%) | Users with > 3 ratings → 8,767 users (−97.7%) |
+
+### Approach 1 — User-Based Collaborative Filtering (UBCF)
+
+Finds users with similar rating patterns to the target user, then recommends products those similar users rated highly.
+
+- Similarity metric: **Cosine distance** between user rating vectors
+- Prediction: **K-Nearest Neighbors (KNN)**
+- Train/test split: 70/30
+- Result: High-precision recommendations with low variance (avg rating 4.4 ± 0.2)
+
+### Approach 2 — Item-Based Collaborative Filtering (IBCF)
+
+Treats each item as a vector in user-rating space, finds similar items to those a user has rated, and recommends them.
+
+- Similarity metric: **Pearson correlation** between item vectors
+- Prediction: **KNN from the Surprise library**
+- Result: Broader coverage with higher variance (avg rating 4.0 ± 0.48)
+
+---
+
+## Key Findings
+
+- **UBCF achieves lower RMSE (0.156 vs 0.256)** — stricter filtering creates a more consistent user preference signal
+- **IBCF provides 5× more recommendations** (2,995 vs 596 items) — better for discovery and diversity
+- **High correlation (r = 0.9021)** between both approaches' predictions — both methods converge on similar quality assessments
+- **Complete inclusion**: every item UBCF recommends also appears in IBCF, confirming UBCF is a high-confidence subset
+- **Higher data reduction ≠ better performance** — Approach 2's looser filter captures more signal despite retaining more noise
+
+---
+
+## Project Structure
+
+```
+Collaborative-Filtering-Recommender/
+├── Collaborative_filtering_Approach1.ipynb   # UBCF: cosine KNN
+├── Collaborative_filtering_Approach2.ipynb   # IBCF: Pearson KNN (Surprise)
+├── Analysis_of_recommended_items.ipynb       # Diversity, novelty, overlap analysis
+└── README.md
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
 
 ```bash
-pip install numpy pandas matplotlib seaborn scikit-learn scikit-surprise
+pip install pandas numpy scikit-learn scikit-surprise matplotlib seaborn
+```
+
+### Run the notebooks
+
+```bash
+# Clone the repository
+git clone https://github.com/SaliElloh/amazon-recommendation-system
+cd amazon-recommendation-system
+```
+
+1. Download the Amazon 2023 Health & Personal Care dataset from [amazon-reviews-2023.github.io](https://amazon-reviews-2023.github.io/)
+2. Place the `reviews` and `metadata` JSON files in the root directory
+3. Open and run the notebooks in order: Approach 1 → Approach 2 → Analysis
+
+> **Note:** The full Amazon 2023 dataset is large. A machine with at least 8GB RAM is recommended for the preprocessing step.
+
+---
+
+## Contributors
+
+| Name | Contributions |
+|---|---|
+| **Sali El-loh** | Recommender system design, comparative analysis, documentation |
+| **Samar** | Data exploration, recommender system, integration, documentation |
+| **Fathi** | Data loading, cleaning, preprocessing, documentation |
+| **Yeshaswi** | Data processing, presentation prep, documentation |
+
+---
+
+## Author
+
+**Sali El-loh**
+M.S. Artificial Intelligence | University of Michigan — Dearborn
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/salielloh12/)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/SaliElloh)
+[![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:selloh@umich.edu)
+
+---
+
+## License
+
+No license specified. Contact the author for usage permissions.
